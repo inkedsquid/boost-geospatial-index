@@ -44,5 +44,8 @@
     "node": ">= 20.0.0",
     "npm": ">= 10.0.0"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "directories": {
+    "prebuilds": "prebuilds"
+  }
 }
