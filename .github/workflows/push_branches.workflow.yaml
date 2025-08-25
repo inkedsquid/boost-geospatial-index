@@ -65,11 +65,6 @@ jobs:
     needs: prebuild
     name: Release process
     runs-on: ubuntu-20.04
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-      packages: write
     steps:
       - name: Download all prebuilds
         uses: actions/download-artifact@v4
@@ -86,6 +81,37 @@ jobs:
           echo "Directory structure:"
           tree prebuilds/ || find prebuilds -type f
         shell: bash
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@kuzzleio"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Package with npm
+        run: npm pack
+
+      - name: List package contents
+        run: |
+          echo "Generated package:"
+          ls -la *.tgz
+          echo "Package contents:"
+          tar -tzf *.tgz | head -20
+        shell: bash
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-package
+          path: "*.tgz"
+          retention-days: 30
 
       # - name: Release
       #   env:
