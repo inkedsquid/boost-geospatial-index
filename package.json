@@ -13,8 +13,8 @@
   ],
   "scripts": {
     "configure": "node-gyp configure",
-    "build": "prebuildify -t node@20.19.4 -t node@22.18.0 -t node@24.6.0 --strip",
-    "install": "node-gyp-build",
+    "build": "prebuildify --strip",
+    "install": "node-gyp-build --debug",
     "lint": "eslint ."
   },
   "repository": {
