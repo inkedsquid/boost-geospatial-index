@@ -82,12 +82,6 @@ jobs:
           tree prebuilds/ || find prebuilds -type f
         shell: bash
 
-      - name: List directory
-        run: |
-          echo "Directory structure:"
-          tree .
-        shell: bash
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -103,6 +97,12 @@ jobs:
 
       - name: Package with npm
         run: npm pack
+
+      - name: List directory
+        run: |
+          echo "Directory structure:"
+          tree .
+        shell: bash
 
       - name: Upload package artifact
         uses: actions/upload-artifact@v4
