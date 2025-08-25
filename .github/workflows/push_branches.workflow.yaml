@@ -5,9 +5,58 @@ on:
     branches:
       - master
       - beta
+      - 1-dev
 
 jobs:
+  prebuild:
+    name: Prebuild on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest, macos-13, macos-latest]
+        arch: x64
+        include:
+          # macOS Apple Silicon (arm64)
+          - os: macos-latest
+            arch: arm64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build prebuilds (Windows/Linux)
+        if: matrix.os == 'ubuntu-22.04' || matrix.os == 'windows-latest'
+        run: npm run build -- --arch=x64
+
+      - name: Build prebuilds (macOS)
+        if: startsWith(matrix.os, 'macos')
+        run: npm run build -- --arch=${{ matrix.arch }}
+
+      - name: List prebuilds
+        run: |
+          echo "Generated prebuilds:"
+          find prebuilds -name "*.node" -type f || echo "No prebuilds found"
+        shell: bash
+
+      - name: Upload prebuilds
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuilds-${{ matrix.os }}-${{ matrix.arch }}
+          path: prebuilds/
+          retention-days: 1
+
   release:
+    needs: prebuild
     name: Release process
     runs-on: ubuntu-20.04
     permissions:
@@ -19,27 +68,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Download all prebuilds
+        uses: actions/download-artifact@v4
         with:
-          node-version: "lts/*"
-          registry-url: "https://registry.npmjs.org"
-          scope: "@kuzzleio"
+          pattern: prebuilds-*
+          path: prebuilds/
+          merge-multiple: true
 
-      - name: Install
-        run: npm ci
-
-
-      - name: configure
-        run: npm run configure
-
-      - name: Build
-        run: npm run build
-
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GHP }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          SEMANTIC_RELEASE_NPM_PUBLISH: "true"
-          SEMANTIC_RELEASE_SLACK_WEBHOOK: ${{ secrets.SEMANTIC_RELEASE_SLACK_WEBHOOK }}
-        run: npx semantic-release
+      # - name: Release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GHP }}
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #     SEMANTIC_RELEASE_NPM_PUBLISH: "true"
+      #     SEMANTIC_RELEASE_SLACK_WEBHOOK: ${{ secrets.SEMANTIC_RELEASE_SLACK_WEBHOOK }}
+      #   run: npx semantic-release
