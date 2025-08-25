@@ -22,7 +22,6 @@
     "url": "git://github.com/kuzzleio/boost-geospatial-index.git"
   },
   "dependencies": {
-    "bindings": "1.5.0",
     "nan": "2.23.0",
     "node-gyp-build": "^4.8.4"
   },
@@ -45,7 +44,15 @@
     "npm": ">= 10.0.0"
   },
   "license": "Apache-2.0",
-  "directories": {
-    "prebuilds": "prebuilds"
-  }
+  "files": [
+    "include/",
+    "prebuilds/",
+    "src/",
+    "binding.gyp",
+    "index.js",
+    "LICENSE.md",
+    "package.json",
+    "README.md",
+    "index.js"
+  ]
 }
