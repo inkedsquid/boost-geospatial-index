@@ -31,10 +31,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 24
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
           cache: "npm"
 
       - name: Install dependencies
@@ -47,12 +47,6 @@ jobs:
       - name: Build prebuilds (macOS)
         if: startsWith(matrix.os, 'macos')
         run: npm run build -- --arch=${{ matrix.arch }}
-
-      - name: List prebuilds
-        run: |
-          echo "Generated prebuilds:"
-          find prebuilds -name "*.node" -type f || echo "No prebuilds found"
-        shell: bash
 
       - name: Upload prebuilds
         uses: actions/upload-artifact@v4
