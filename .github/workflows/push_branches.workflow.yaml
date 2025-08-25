@@ -71,9 +71,6 @@ jobs:
       pull-requests: write
       packages: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
       - name: Download all prebuilds
         uses: actions/download-artifact@v4
         with:
@@ -81,6 +78,14 @@ jobs:
           path: prebuilds/
           merge-multiple: true
           run-id: ${{ github.run_id }}
+
+      - name: List downloaded prebuilds
+        run: |
+          echo "Downloaded prebuilds:"
+          find prebuilds -name "*.node" -type f -exec ls -la {} \; || echo "No prebuilds found"
+          echo "Directory structure:"
+          tree prebuilds/ || find prebuilds -type f
+        shell: bash
 
       # - name: Release
       #   env:
