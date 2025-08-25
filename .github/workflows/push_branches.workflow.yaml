@@ -98,14 +98,6 @@ jobs:
       - name: Package with npm
         run: npm pack
 
-      - name: List package contents
-        run: |
-          echo "Generated package:"
-          ls -la *.tgz
-          echo "Package contents:"
-          tar -tzf *.tgz | head -20
-        shell: bash
-
       - name: Upload package artifact
         uses: actions/upload-artifact@v4
         with:
