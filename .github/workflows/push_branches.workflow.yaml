@@ -66,22 +66,6 @@ jobs:
     name: Release process
     runs-on: ubuntu-22.04
     steps:
-      - name: Download all prebuilds
-        uses: actions/download-artifact@v4
-        with:
-          pattern: prebuilds-*
-          path: prebuilds/
-          merge-multiple: true
-          run-id: ${{ github.run_id }}
-
-      - name: List downloaded prebuilds
-        run: |
-          echo "Downloaded prebuilds:"
-          find prebuilds -name "*.node" -type f -exec ls -la {} \; || echo "No prebuilds found"
-          echo "Directory structure:"
-          tree prebuilds/ || find prebuilds -type f
-        shell: bash
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -92,17 +76,19 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           scope: "@kuzzleio"
 
+      - name: Download all prebuilds
+        uses: actions/download-artifact@v4
+        with:
+          pattern: prebuilds-*
+          path: prebuilds/
+          merge-multiple: true
+          run-id: ${{ github.run_id }}
+
       - name: Install dependencies
         run: npm ci
 
       - name: Package with npm
         run: npm pack
-
-      - name: List directory
-        run: |
-          echo "Directory structure:"
-          tree .
-        shell: bash
 
       - name: Upload package artifact
         uses: actions/upload-artifact@v4
