@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - beta
+      - 1-dev
 
 jobs:
   prebuild:
@@ -74,10 +75,10 @@ jobs:
           path: prebuilds/
           merge-multiple: true
 
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GHP }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          SEMANTIC_RELEASE_NPM_PUBLISH: "true"
-          SEMANTIC_RELEASE_SLACK_WEBHOOK: ${{ secrets.SEMANTIC_RELEASE_SLACK_WEBHOOK }}
-        run: npx semantic-release
+      # - name: Release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GHP }}
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #     SEMANTIC_RELEASE_NPM_PUBLISH: "true"
+      #     SEMANTIC_RELEASE_SLACK_WEBHOOK: ${{ secrets.SEMANTIC_RELEASE_SLACK_WEBHOOK }}
+      #   run: npx semantic-release
