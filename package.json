@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "configure": "node-gyp configure",
-    "build": "prebuildify -t node@20.0.0 --strip",
+    "build": "prebuildify -t node@20.0.0 -t node@22.0.0 -t node@24.0.0 --no-napi --strip",
     "install": "node-gyp-build",
     "lint": "eslint ."
   },
